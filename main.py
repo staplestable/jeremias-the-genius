@@ -64,6 +64,21 @@ time_remaining = time_limit
 # Variável para controlar o estado da demonstração
 showing_sequence = False
 
+def play_theme_music():
+    try:
+        mixer.music.load("assets/sounds/game_music.mp3")  # Substitua pelo caminho correto do seu arquivo de música
+        mixer.music.play(-1, 0.0)  # O -1 faz com que a música toque em loop, e 0.0 é o tempo de atraso
+    except pygame.error as e:
+        print(f"Erro ao carregar a música: {e}")
+
+def shuffle_colors():
+    keys = list(COLORS.keys())
+    random.shuffle(keys)
+    
+    shuffled_colors = {keys[i]: COLORS[original] for i, original in enumerate(COLORS.keys())}
+    shuffled_light_colors = {keys[i]: LIGHT_COLORS[original] for i, original in enumerate(LIGHT_COLORS.keys())}
+    
+    return shuffled_colors, shuffled_light_colors
 def set_time_limit(limit, lives, settings):
     global time_limit
     mixer.music.load("assets/sounds/menu-selected.wav")
@@ -97,10 +112,14 @@ def load_ranking():
 
 # Função para adicionar um novo passo à sequência
 def add_step():
+    global COLORS, LIGHT_COLORS
     step = random.choice(list(COLORS.keys()))
     sequence.append(step)
     show_sequence()
 
+    # Embaralha as cores após a fase 3
+    if Fase_unlimited >=3:
+        COLORS, LIGHT_COLORS = shuffle_colors()
 # Função para escurecer a tela
 def dim_screen():
     overlay = pygame.Surface((WIDTH, HEIGHT))
@@ -108,7 +127,7 @@ def dim_screen():
     overlay.set_alpha(50)
     screen.blit(overlay, (0, 0))
     pygame.display.flip()
-    pygame.time.delay(200)
+    pygame.time.delay(100)
 
 # Função para desenhar os botões e o timer
 def draw_game_elements(highlight=None):
@@ -183,7 +202,7 @@ def reset_highlight():
 # Função para iniciar o jogo
 def start_game_unlimited():
     mixer.music.load("assets/sounds/menu-selected.wav")
-    mixer.music.play()
+    mixer.music.play()  # Som de seleção do menu
     global user_sequence, score, game_over, lives
     user_sequence = []
     score = 0
@@ -193,6 +212,7 @@ def start_game_unlimited():
 
     countdown_timer(3)
     add_step()
+    play_theme_music()  # Inicia a música tema ao começar o jogo
     game_loop_unlimited()
 
 
@@ -238,8 +258,8 @@ def game_loop_unlimited():
             if event.type == pygame.QUIT:
                 exit_game()
 
-            if not game_over:
-                if event.type == pygame.KEYDOWN and not showing_sequence:
+            if not game_over:  # Adicione essa verificação aqui
+                if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP:
                         mixer.music.load("assets/sounds/up.wav")
                         mixer.music.play()
