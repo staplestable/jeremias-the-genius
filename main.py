@@ -66,6 +66,8 @@ showing_sequence = False
 
 # Variável de controle de pausa
 game_paused = False
+
+                    
 def restore_colors():
     global COLORS, LIGHT_COLORS
     COLORS = {
@@ -106,7 +108,7 @@ def add_step():
     show_sequence()
 
     # Embaralha as cores após a fase 3
-    if Fase_unlimited >2 and Fase_unlimited!=3:
+    if Fase_unlimited >=2 and Fase_unlimited!=3:
         COLORS, LIGHT_COLORS = shuffle_colors()
         
 
@@ -161,7 +163,7 @@ def draw_game_elements(highlight=None):
     global Fase_unlimited, lives, score  # Adicione 'lives' aqui para exibir na tela
 
     # Verifica a condição de fase para definir a largura e altura dos botões
-    if Fase_unlimited >= 4:
+    if Fase_unlimited >= 3:
         var_width = random.randint(100, 300)
         var_height = random.randint(100, 300)
     else:
@@ -317,7 +319,7 @@ def game_loop_unlimited():
 
                         reset_timer()  # Reinicia o tempo ao pressionar um botão
                         result = check_sequence()
-                        if len(sequence) >= 5 * Fase_unlimited:
+                        if len(sequence) >= 10 * Fase_unlimited:
                             Fase_unlimited += 1
                         if result is True:
                             dim_screen()
@@ -511,9 +513,9 @@ def show_menu():
     menu.add.button('Começar Jogo', start_game_unlimited)  # Opção para iniciar o jogo
     menu.add.button('Dificuldade', difficulty_menu)  # Opção para o menu de dificuldades
     menu.add.button('Configurações', settings_menu)  # Opção para configurações
-    menu.add.button('Ranking', show_ranking)  # Modificado para "Ranking"
+    menu.add.button('Ranking', show_ranking)  # Opção para ver o ranking
     menu.add.button('Créditos', show_credits)
-    menu.add.button('Sair', exit_game) 
+    menu.add.button('Sair', exit_game)  # Opção para sair do jogo
 
     menu.mainloop(screen)
 def set_timer(value):
